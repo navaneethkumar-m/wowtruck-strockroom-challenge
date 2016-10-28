@@ -26,7 +26,7 @@ class Marksregister extends \yii\db\ActiveRecord
     /**
      * @inheritdoc
      */
-	public $subjects = array();
+	public $subjects;
 	
     public static function tableName()
     {
@@ -41,12 +41,23 @@ class Marksregister extends \yii\db\ActiveRecord
         return [
             [['grade_id', 'student_id', 'score', 'updated_on', 'updated_by'], 'required'],
             [['grade_id', 'student_id', 'score', 'updated_by'], 'integer'],
+			['subjects', 'integer', 'min'=>0, 'max'=>100],
             [['updated_on'], 'safe'],
             [['updated_by'], 'exist', 'skipOnError' => true, 'targetClass' => User::className(), 'targetAttribute' => ['updated_by' => 'id']],
             [['grade_id'], 'exist', 'skipOnError' => true, 'targetClass' => Grade::className(), 'targetAttribute' => ['grade_id' => 'id']],
             [['student_id'], 'exist', 'skipOnError' => true, 'targetClass' => Student::className(), 'targetAttribute' => ['student_id' => 'id']],
         ];
     }
+	
+	public function isValidMark($attribute, $params)
+	{
+		$this->addError($attribute, 'must contain exactly 8 digits.');
+		if (is_int($this->$attribute) && $this->$attribute >= 0 && $this->$attribute <=100) {
+			//
+		} else {
+			$this->addError($attribute, 'must contain exactly 8 digits.');
+		}
+	}
 
     /**
      * @inheritdoc

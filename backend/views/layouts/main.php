@@ -34,14 +34,15 @@ AppAsset::register($this);
             'class' => 'navbar-inverse navbar-fixed-top',
         ],
     ]);
-
-    echo Nav::widget([
-        'options' => ['class' => 'navbar-nav'],
-        'items' => [
-            ['label' => 'Students', 'url' => ['/student']],
-	    ['label' => 'Marks Register', 'url' => ['/marksregister']],
-        ],
-    ]);
+	if (!Yii::$app->user->isGuest) {
+		echo Nav::widget([
+			'options' => ['class' => 'navbar-nav'],
+			'items' => [
+				['label' => 'Students', 'url' => ['/student']],
+			['label' => 'Marks Register', 'url' => ['/marksregister']],
+			],
+		]);
+	}	
     $menuItems = [
         ['label' => 'Home', 'url' => ['/site/index']],
     ];
