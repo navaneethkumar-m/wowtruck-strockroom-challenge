@@ -6,7 +6,7 @@ use yii\web\Controller;
 use yii\filters\VerbFilter;
 use yii\filters\AccessControl;
 use common\models\LoginForm;
-
+use common\models\TeacherUser;
 /**
  * Site controller
  */
@@ -75,8 +75,20 @@ class SiteController extends Controller
         }
 
         $model = new LoginForm();
-        if ($model->load(Yii::$app->request->post()) && $model->login()) {
-            return $this->goBack();
+        if ($model->load(Yii::$app->request->post()) && $model->login()) {	
+			// block added for validating user role and assigning session variable
+			Yii::$app->session->set('user.teacher_id',0);
+			if(Yii::$app->user->can('teacher')) {
+				$data = TeacherUser::find()->where(['user_id' => Yii::$app->user->id])->one();
+				if(isset($data->teacher_id))
+					Yii::$app->session->set('user.teacher_id',$data->teacher_id);
+					
+				return $this->redirect(['marksregister/index']);
+			} else {
+				return $this->goBack();
+			}
+			
+            
         } else {
             return $this->render('login', [
                 'model' => $model,
